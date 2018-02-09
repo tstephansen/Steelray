@@ -68,6 +68,58 @@ namespace CodingAssessment.Tests
             Assert.AreEqual(1, thirteenthNode.Children.Count);
         }
 
+        [TestMethod]
+        public void Serialize_Should_Return_Default_Byte_Array_When_Passed_A_Null_Value()
+        {
+            const IdTree tree = null;
+            var serializer = new IdTreeSerializer();
+            var result = serializer.Serialize(tree);
+            Assert.AreEqual(default(byte[]), result);
+        }
+
+        [TestMethod]
+        public void Deserialize_Should_Return_Empty_IdTree_When_Passed_A_Null_Value()
+        {
+            const byte[] bytes = null;
+            var serializer = new IdTreeSerializer();
+            var result = serializer.Deserialize(bytes);
+            Assert.IsNull(result.RootNode);
+        }
+
+        [TestMethod]
+        public void Deserialize_Should_Return_Empty_Tree_When_Passed_An_Invalid_Byte_Array()
+        {
+            var bytes = new byte[] {0, 0, 0};
+            var serializer = new IdTreeSerializer();
+            var result = serializer.Deserialize(bytes);
+            Assert.IsNotNull(result);
+        }
+
+        [TestMethod]
+        public void Serialize_Should_Still_Work_When_RootNode_Has_No_Children()
+        {
+            var tree = new IdTree {RootNode = new IdNode {Id = 1, Children = null}};
+            var serializer = new IdTreeSerializer();
+            var result = serializer.Serialize(tree);
+            Assert.AreNotEqual(default(byte[]), result);
+        }
+
+        [TestMethod]
+        public void CountNodes_Extension_Method_Should_Return_0_When_There_Are_No_Children()
+        {
+            var node = new IdNode {Id = 1, Children = null};
+            var nodeCount = node.CountChildren();
+            Assert.AreEqual(0, nodeCount);
+        }
+
+        [TestMethod]
+        public void TotalNodes_Extension_Method_Should_Return_0_When_There_Are_No_Nodes()
+        {
+            var tree = new IdTree();
+            var nodeCount = tree.TotalNodes();
+            Assert.AreEqual(0, nodeCount);
+        }
+
         #region Sample Data
         /// <summary>
         /// Creates an IdTree with parent nodes and children for testing.

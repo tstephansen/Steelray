@@ -1,4 +1,5 @@
-﻿using CodingAssessment.Models;
+﻿using System;
+using CodingAssessment.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,7 +20,7 @@ namespace CodingAssessment
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "The assignment specified a non static method")]
         public byte[] Serialize(IdTree tree)
         {
-            if (tree == null) return default(byte[]);
+            if (tree?.RootNode == null) return default(byte[]);
             var sb = new StringBuilder();
             var rootNode = tree.RootNode;
             ConvertNodesToString(rootNode, sb);
@@ -37,14 +38,22 @@ namespace CodingAssessment
             var str = Encoding.ASCII.GetString(bytes);
             _nodeDict = new Dictionary<int, IdNode>();
             var array = str.ToCharArray();
-            var rootId = GetNodeId(array, 0);
-            var rootNode = new IdNode
+            IdNode rootNode;
+            try
             {
-                Id = rootId,
-                Parent = null,
-                Children = new List<IdNode>()
-            };
-            _nodeDict.Add(rootNode.Id, rootNode);
+                var rootId = GetNodeId(array, 0);
+                rootNode = new IdNode
+                {
+                    Id = rootId,
+                    Parent = null,
+                    Children = new List<IdNode>()
+                };
+                _nodeDict.Add(rootNode.Id, rootNode);
+            }
+            catch (Exception)
+            {
+                return new IdTree();
+            }
             DeserializeNodes(array, rootNode);
             return RecreateTreeStructure(_nodeDict);
         }
@@ -58,7 +67,7 @@ namespace CodingAssessment
         /// <param name="sb">The sb.</param>
         private static void ConvertNodesToString(IdNode node, StringBuilder sb)
         {
-            if (node?.Children == null) return;
+            if (node.Children == null) return;
             sb.Append(node.Id);
             if (node.Children.Count > 0) sb.Append('[');
             for (var i = 0; i < node.Children.Count; i++)

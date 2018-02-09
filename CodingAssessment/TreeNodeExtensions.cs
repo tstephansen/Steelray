@@ -23,9 +23,9 @@ namespace CodingAssessment
         /// </summary>
         /// <param name="node">The node.</param>
         /// <returns>System.Int32.</returns>
-        private static int CountChildren(this IdNode node)
+        public static int CountChildren(this IdNode node)
         {
-            if (node == null) return 0;
+            if (node?.Children == null) return 0;
             var count = node.Children.Count;
             foreach (var child in node.Children)
             {
