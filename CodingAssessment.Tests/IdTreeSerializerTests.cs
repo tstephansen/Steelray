@@ -125,7 +125,7 @@ namespace CodingAssessment.Tests
         /// Creates an IdTree with parent nodes and children for testing.
         /// </summary>
         /// <returns>IdTree.</returns>
-        public static IdTree CreateTree()
+        private static IdTree CreateTree()
         {
             var tree = new IdTree();
             var n1 = new IdNode { Id = 1, Children = new List<IdNode>() };
