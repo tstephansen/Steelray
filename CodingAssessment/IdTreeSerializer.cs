@@ -19,6 +19,7 @@ namespace CodingAssessment
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "The assignment specified a non static method")]
         public byte[] Serialize(IdTree tree)
         {
+            if (tree == null) return default(byte[]);
             var sb = new StringBuilder();
             var rootNode = tree.RootNode;
             ConvertNodesToString(rootNode, sb);
@@ -32,6 +33,7 @@ namespace CodingAssessment
         /// <returns>IdTree.</returns>
         public IdTree Deserialize(byte[] bytes)
         {
+            if (bytes == null) return new IdTree();
             var str = Encoding.ASCII.GetString(bytes);
             _nodeDict = new Dictionary<int, IdNode>();
             var array = str.ToCharArray();
@@ -116,7 +118,7 @@ namespace CodingAssessment
         /// <returns>IdTree.</returns>
         private static IdTree RecreateTreeStructure(Dictionary<int, IdNode> nodes)
         {
-            Parallel.ForEach(nodes.Where(c=>c.Value.Parent != null), (node, state) =>
+            Parallel.ForEach(nodes.Where(c=>c.Value.Parent != null), (node) =>
             {
                 nodes.First(c => c.Key == node.Value.Parent.Id).Value.Children.Add(node.Value);
             });
